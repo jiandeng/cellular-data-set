@@ -26,6 +26,8 @@ def cell_to_dataframe(file):
     for col in df:
         if '_time' in col:
             df[col] -= df['time']
+    for i in range(df.shape[1] - 1, 4, -1):
+        df.iloc[:, i] = df.iloc[:, i] - df.iloc[:, i - 1]
 
     df['time'] = pd.to_datetime(df.time, unit = 's')
     df.sort_values(['sn', 'time'], inplace=True)
