@@ -28,6 +28,13 @@ def cell_to_dataframe(file):
             df[col] -= df['time']
     for i in range(df.shape[1] - 1, 4, -1):
         df.iloc[:, i] = df.iloc[:, i] - df.iloc[:, i - 1]
+    df['conn_time'] = 0
+    for i in range(4, 9):
+        df['conn_time'] += df.iloc[:, i]
+    df['test_time'] = 0
+    for i in range(9, 29):
+        df['test_time'] += df.iloc[:, i]
+    df['total_time'] = df['conn_time'] + df['test_time']
 
     df['time'] = pd.to_datetime(df.time, unit = 's')
     df.sort_values(['sn', 'time'], inplace=True)
