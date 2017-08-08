@@ -11,14 +11,14 @@ def cell_to_dataframe(file):
     f.close()
 
     content = map(lambda x: x if '-->>' not in x else x[25:], content)
-    records = [ unpack('i'*33, de(line[:-1], '-/'))[1:-3] for line in content ]
-    cn = ['sn', 'time', 'hwt_time', 'csq_time', 'creg_time', 'csq', 'pdp_time', 'connect_time']
+    records = [ unpack('i'*33, de(line[:-1], '-/'))[1:-2] for line in content ]
+    cn = ['sn', 'time', 'hwt_time', 'csq_time', 'creg_time', 'cgatt_time', 'csq', 'pdp_time', 'connect_time']
     cn.extend(['upload_time' + str(i) for i in range(10)])
     cn.extend(['download_time' + str(i) for i in range(10)])
     cn.append('voltage')
     df = pd.DataFrame(records, columns=cn)
 
-    cn = ['sn', 'time', 'voltage', 'csq', 'hwt_time', 'csq_time', 'creg_time', 'pdp_time', 'connect_time']
+    cn = ['sn', 'time', 'voltage', 'csq', 'hwt_time', 'csq_time', 'creg_time', 'cgatt_time', 'pdp_time', 'connect_time']
     cn.extend(reduce(operator.concat, [['upload_time' + str(i), 'download_time' + str(i)] for i in range(10)]))
     df = df[cn]
 
@@ -29,10 +29,10 @@ def cell_to_dataframe(file):
     for i in range(df.shape[1] - 1, 4, -1):
         df.iloc[:, i] = df.iloc[:, i] - df.iloc[:, i - 1]
     df['conn_time'] = 0
-    for i in range(4, 9):
+    for i in range(4, 10):
         df['conn_time'] += df.iloc[:, i]
     df['test_time'] = 0
-    for i in range(9, 29):
+    for i in range(10, 30):
         df['test_time'] += df.iloc[:, i]
     df['total_time'] = df['conn_time'] + df['test_time']
 
